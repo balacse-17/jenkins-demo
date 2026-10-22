@@ -4,22 +4,21 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                checkout scm
+                echo 'Source code checked out from GitHub'
             }
         }
 
         stage('Test') {
             steps {
-                sh 'test -f index.html'
-                echo 'HTML file exists - Test passed'
+                bat 'if exist index.html (echo HTML file exists - Test passed) else (echo HTML file missing & exit /b 1)'
             }
         }
 
         stage('Build') {
             steps {
-                echo 'Preparing HTML application...'
-                sh 'mkdir -p build'
-                sh 'cp index.html build/'
+                bat 'if not exist build mkdir build'
+                bat 'copy /Y index.html build\\index.html'
+                echo 'Build completed successfully'
             }
         }
 
@@ -33,9 +32,8 @@ pipeline {
 
     post {
         success {
-            echo 'HTML application deployed successfully!'
+            echo 'Pipeline completed successfully!'
         }
-
         failure {
             echo 'Pipeline failed!'
         }
